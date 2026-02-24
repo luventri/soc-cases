@@ -6,7 +6,7 @@ set -euo pipefail
 #   ./tools/platform_health.sh 2026-02-24    # uses provided date (YYYY-MM-DD)
 
 DATE="${1:-$(date +%F)}"
-OUT="artifacts/platform_health_${DATE}.md"
+OUT="artifacts/platform/health/platform_health_${DATE}.md"
 
 # Adjust these two if your paths/URL differ
 COMPOSE="/home/socadmin/wazuh-docker/single-node/docker-compose.yml"
