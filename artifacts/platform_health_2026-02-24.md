@@ -1,6 +1,6 @@
 # Platform Health — Wazuh single-node Docker (P0)
 
-- Date/time (local): 2026-02-24 11:39 UTC
+- Date/time (local): 2026-02-24 11:42 UTC
 - Host: soc-core
 - Compose file path: /home/socadmin/wazuh-docker/single-node/docker-compose.yml
 - Dashboard URL used: https://192.168.242.128:443
@@ -11,7 +11,7 @@ Command:
 
 Output:
 ```text
-time="2026-02-24T11:39:41Z" level=warning msg="/home/socadmin/wazuh-docker/single-node/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+time="2026-02-24T11:42:14Z" level=warning msg="/home/socadmin/wazuh-docker/single-node/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
 NAME                            IMAGE                         COMMAND                  SERVICE           CREATED       STATUS       PORTS
 single-node-wazuh.dashboard-1   wazuh/wazuh-dashboard:4.9.2   "/entrypoint.sh"         wazuh.dashboard   2 weeks ago   Up 12 days   443/tcp, 0.0.0.0:443->5601/tcp, [::]:443->5601/tcp
 single-node-wazuh.indexer-1     wazuh/wazuh-indexer:4.9.2     "/entrypoint.sh open…"   wazuh.indexer     2 weeks ago   Up 12 days   0.0.0.0:9200->9200/tcp, [::]:9200->9200/tcp
@@ -42,7 +42,7 @@ osd-name: wazuh.dashboard
 x-frame-options: sameorigin
 cache-control: private, no-cache, no-store, must-revalidate
 content-length: 0
-Date: Tue, 24 Feb 2026 11:39:42 GMT
+Date: Tue, 24 Feb 2026 11:42:15 GMT
 Connection: keep-alive
 Keep-Alive: timeout=120
 
