@@ -6,3 +6,27 @@
 
 # --- temp / working dir ---
 /tmp/
+
+# --- Secrets / credentials (never commit) ---
+*.env
+*.env.*
+.env
+.env.*
+# secrets* was too broad; ignore only likely secret files instead
+secrets*.env
+secrets*.txt
+secrets*.json
+secrets*.yml
+secrets*.yaml
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*token*
+*apikey*
+*api_key*
+*.kubeconfig
