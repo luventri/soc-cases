@@ -1,0 +1,13 @@
+# Optional credential mapping for functional tests.
+# Secrets live ONLY in ~/.secrets/mini-soc.env (not in git).
+# The script will still audit ALL existing users via admin cert even if this file is empty.
+credential_map:
+  - username: analyst
+    pass_env: ANALYST_PASS
+
+  # Example if your Wazuh/OpenSearch admin user is "admin"
+  # - username: admin
+  #   pass_env: WAZUH_ADMIN_PASS
+
+  - username: luciano.ventrice
+    pass_env: LUCIANO_VENTRICE_PASS

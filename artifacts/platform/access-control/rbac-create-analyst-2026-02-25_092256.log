@@ -1,0 +1,8 @@
+=== CREATE ANALYST USER ===
+DATE: 2026-02-25T09:22:56+00:00
+USER: luciano.ventrice
+PASS_ENV: LUCIANO_VENTRICE_PASS (stored in /home/socadmin/.secrets/mini-soc.env, not in git)
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_092256.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_092256
+

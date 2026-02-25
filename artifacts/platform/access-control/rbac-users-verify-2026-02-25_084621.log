@@ -1,0 +1,12 @@
+=== RBAC USERS VERIFY ===
+DATE: 2026-02-25T08:46:21+00:00
+REPO: /home/socadmin/soc-cases
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+DASHBOARDS_URL: https://192.168.242.128
+DOCKER_CMD: docker
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-users-verify-2026-02-25_084621.log
+
+=== GLOBAL AUDIT (admin cert, no passwords) ===
+-- internalusers (raw saved) --
+ERROR: internalusers is empty (file: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_084621/internalusers.json). Likely docker/sudo/cert/curl failure.
+HINT: try: sudo -v ; then rerun. Also check container name: single-node-wazuh.indexer-1

@@ -1,0 +1,14 @@
+=== RBAC USERS VERIFY ===
+DATE: 2026-02-25T08:43:51+00:00
+REPO: /home/socadmin/soc-cases
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+DASHBOARDS_URL: https://192.168.242.128
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-users-verify-2026-02-25_084351.log
+
+=== GLOBAL AUDIT (admin cert, no passwords) ===
+-- internalusers (raw saved) --
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_084351/internalusers.json
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_084351/rolesmapping.json
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_084351/roles.json
+
+=== USERS FOUND (from internalusers) ===

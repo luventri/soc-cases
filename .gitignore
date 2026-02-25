@@ -1,0 +1,8 @@
+
+# --- Access control evidence (keep logs, ignore raw payload dumps) ---
+!/artifacts/platform/access-control/
+!/artifacts/platform/access-control/*.log
+/artifacts/platform/access-control/raw-*/
+
+# --- temp / working dir ---
+/tmp/

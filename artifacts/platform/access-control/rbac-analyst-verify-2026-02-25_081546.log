@@ -1,0 +1,5 @@
+=== NEGATIVE TEST: security api rolesmapping (should be 403) ===
+security_api_rolesmapping HTTP=403
+
+=== NEGATIVE TEST: security api roles (should be 403) ===
+security_api_roles HTTP=403

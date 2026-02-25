@@ -1,0 +1,49 @@
+=== RBAC USERS VERIFY ===
+DATE: 2026-02-25T09:04:34+00:00
+REPO: /home/socadmin/soc-cases
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+DASHBOARDS_URL: https://192.168.242.128
+DOCKER_CMD: docker
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-users-verify-2026-02-25_090434.log
+
+=== GLOBAL AUDIT (admin cert, no passwords) ===
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_090434/internalusers.json
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_090434/rolesmapping.json
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_090434/roles.json
+
+=== USERS + EFFECTIVE ROLES SUMMARY (computed) ===
+username	backend_roles	effective_roles	class	risk_flags
+admin	admin	all_access	other	TENANT_WRITE
+analyst	kibana_read_only,kibana_user,readall	dashboards_globaltenant_ro,dashboards_kibana_ro,dashboards_readonly,dashboards_savedobjects_ro,readall,wazuh_analyst_readonly	analyst_like	-
+kibanaro	kibanauser,readall	kibana_user,readall	other	INDEX_WRITE
+kibanaserver		kibana_server,manage_wazuh_index	other	INDEX_WRITE
+logstash	logstash	logstash	other	CLUSTER_ADMIN,INDEX_WRITE
+readall	readall	readall	other	-
+snapshotrestore	snapshotrestore	manage_snapshots	other	INDEX_WRITE
+
+=== CACHE FLUSH (admin cert) ===
+{"status":"OK","message":"Cache flushed successfully."}
+=== SAMPLE WAZUH INDEX ===
+sample_wazuh_index=wazuh-alerts-4.x-2026.02.16
+
+=== FUNCTIONAL TESTS (ONLY for users with credentials in users.yml) ===
+
+---- USER FUNCTIONAL: analyst ----
+pass_env: ANALYST_PASS
+[F1] authinfo (indexer) -> should be 200
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_090434/authinfo-analyst.json
+[F2] dashboards saved_objects/_find -> expected 200 for analyst
+saved_objects_find HTTP=200
+[F3] wazuh index search -> expected 200 for analyst
+wazuh_search HTTP=200
+[F4] NEGATIVE: write to wazuh index -> expected 403 for analyst
+wazuh_write HTTP=403
+[F5] NEGATIVE: Security API -> expected 403 for analyst
+security_api_rolesmapping HTTP=403
+security_api_roles HTTP=403
+[F6] NEGATIVE: create saved_object -> expected 401/403 for analyst
+savedobject_create HTTP=403
+
+=== RESULT: PASS ===
+EVIDENCE_LOG: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-users-verify-2026-02-25_090434.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-2026-02-25_090434

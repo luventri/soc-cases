@@ -1,0 +1,9 @@
+=== CREATE/UPDATE ANALYST USER ===
+DATE: 2026-02-25T09:16:54+00:00
+USER: luciano.ventrice
+PASS_ENV: LUCIANO_VENTRICE_PASS (stored in /home/socadmin/.secrets/mini-soc.env, not in git)
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+USERS_YML: /home/socadmin/soc-cases/tools/access-control/users.yml
+EVIDENCE_LOG: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_091654.log
+
+[1] internalusers PUT (admin cert) -> expect 200/201

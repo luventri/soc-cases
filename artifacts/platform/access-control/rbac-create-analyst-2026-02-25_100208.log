@@ -1,0 +1,33 @@
+=== CREATE ANALYST USER (persistent, clone perms from 'analyst') ===
+DATE: 2026-02-25T10:02:08+00:00
+USER: luciano.ventrice
+PASS_ENV: LUCIANO_VENTRICE_PASS (stored in /home/socadmin/.secrets/mini-soc.env; not in git)
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_100208.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208
+
+backend_roles_template: readall,kibana_user,kibana_read_only
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208/internaluser-analyst.json
+
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208/payload-luciano.ventrice.json
+
+-- hash generation (inside container) --
+hash: generated (not printed)
+
+-- internal_users.yml upsert (no Security API; persists across securityadmin) --
+internal_users_yml_upsert: OK
+
+-- apply security config (securityadmin.sh) --
+securityadmin: OK
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208/securityadmin.txt
+
+-- flush security cache (admin cert) --
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208/cache_flush.txt
+
+-- ensure verify-users credential_map contains this user (no password stored) --
+users.yml: mapping already present for luciano.ventrice
+
+=== RESULT: PASS ===
+EVIDENCE_LOG: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_100208.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_100208
+NEXT (UI): login to Wazuh Dashboard as 'luciano.ventrice' and confirm plugin loads.

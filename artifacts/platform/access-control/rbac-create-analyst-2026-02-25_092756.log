@@ -1,0 +1,23 @@
+=== CREATE ANALYST USER ===
+DATE: 2026-02-25T09:27:56+00:00
+USER: luciano.ventrice
+PASS_ENV: LUCIANO_VENTRICE_PASS (stored in /home/socadmin/.secrets/mini-soc.env, not in git)
+INDEXER_CONTAINER: single-node-wazuh.indexer-1
+OUT: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_092756.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_092756
+
+-- internalusers PUT (admin cert) --
+internaluser_put HTTP=200
+saved: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_092756/create_user_luciano.ventrice.json
+
+-- flush security cache (admin cert) --
+{"status":"OK","message":"Cache flushed successfully."}
+OK: users.yml already contains mapping for luciano.ventrice
+
+=== RESULT: OK (create/update done) ===
+EVIDENCE_LOG: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_092756.log
+NEXT: run tools/access-control/verify-users.sh
+
+=== RESULT: PASS ===
+EVIDENCE_LOG: /home/socadmin/soc-cases/artifacts/platform/access-control/rbac-create-analyst-2026-02-25_092756.log
+RAW_DIR: /home/socadmin/soc-cases/artifacts/platform/access-control/raw-create-2026-02-25_092756
