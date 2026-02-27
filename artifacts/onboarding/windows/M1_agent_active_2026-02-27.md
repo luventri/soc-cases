@@ -1,4 +1,4 @@
-# M2 — Windows Security ingestion (host=LAPTOP-RH48MVJ8)
+# M1 — Agent active (agent.name=LAPTOP-RH48MVJ8)
 
 - date: 2026-02-27
 - index: wazuh-archives-4.x-*
@@ -10,6 +10,4 @@ RESULT: PASS
 - agent.name: LAPTOP-RH48MVJ8
 - decoder.name: windows_eventchannel
 - location: EventChannel
-- data.win.system.computer: LAPTOP-RH48MVJ8
-- data.win.system.channel: Security
-- freshness: PASS (age_seconds=13, threshold_seconds=86400)
+- freshness: PASS (age_seconds=13, threshold_seconds=900)
