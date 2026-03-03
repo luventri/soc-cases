@@ -21,6 +21,7 @@ Documentación operativa y de gobierno para el home SOC.
 
 ### Onboarding
 - `docs/runbooks/onboarding/windows/onboarding_windows.md`
+- `docs/runbooks/onboarding/linux/onboarding_linux.md`
 
 ### Telemetría
 - `docs/runbooks/telemetry/P0-TDQ-COVERAGE-001_coverage_report_24h.md`
