@@ -44,10 +44,10 @@ In a single-operator setup, one person can execute all roles, but sections must 
    - Check: priority, age, blocker status
    - Action: close stale/no-longer-valid, escalate blocked items
 
-6. Metrics pack status (transition to MET-001)
-   - Source: coverage + ops-alerts + CI results (until `docs/metrics.md` + weekly metrics script exist)
-   - Check: whether weekly pack inputs are complete
-   - Action: track MET-001 progress as priority backlog item
+6. Metrics pack status (MET-001 operational)
+   - Source: `artifacts/metrics/weekly_metrics_YYYY-WW.md`
+   - Check: weekly result (PASS/WARN/FAIL), KPI-level actions, threshold fit
+   - Action: execute remediation actions and tune thresholds after 2-3 cycles
 
 ## GO / NO-GO criteria for planned changes
 Use this decision gate before approving weekly high-impact changes:

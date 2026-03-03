@@ -7,6 +7,9 @@ Documentación operativa y de gobierno para el home SOC.
 - `docs/governance/hardening-plan.md`
 - `docs/governance/secrets-management.md`
 
+## Metrics
+- `docs/metrics.md`
+
 ## Runbooks
 ### Plataforma
 - `docs/runbooks/platform/P0-PLAT-HEALTH-001_platform_health_check.md`

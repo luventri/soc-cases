@@ -49,7 +49,7 @@
 
 | id | area | capability | sub-capability | priority | owner_role | status | evidence_paths | acceptance_criteria (DoD) | next_action |
 |---|---|---|---|---|---|---|---|---|---|
-| MET-001 | Metrics | Weekly SLO pack | Required weekly metrics | P0 | Telemetry Owner | TODO | docs/metrics.md; tools/metrics/weekly_metrics.sh; artifacts/metrics/weekly_metrics_YYYY-WW.md | Weekly report exists with thresholds and actions (MTTD/MTTR optional, but health KPIs required) | Use existing coverage + ops-alerts + CI results |
+| MET-001 | Metrics | Weekly SLO pack | Required weekly metrics | P0 | Telemetry Owner | DONE | docs/metrics.md; tools/metrics/weekly_metrics.sh; artifacts/metrics/weekly_metrics_YYYY-WW.md | Weekly report exists with thresholds and actions (MTTD/MTTR optional, but health KPIs required) | Run weekly with GOV-003 and tune thresholds after 2-3 cycles |
 | MET-002 | Metrics | Trend tracking | Baselines & drift | P1 | Telemetry Owner | TODO | artifacts/telemetry/baselines/*; docs/metrics.md | Baselines for key channels, and alert on deviation | Start with Windows, extend to Linux/pfSense |
 
 ---
