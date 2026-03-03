@@ -43,7 +43,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | GOV-001 | Governance | Change control | PR discipline + protections (Codex-safe) | P0 | SOC Manager + SOC Engineer | DONE | docs/governance/change-control.md; CODEOWNERS; artifacts/governance/gov-001_branch_protection_applied_YYYY-MM-DD.md | No direct push to main; PR required; required CI checks; CODEOWNERS enforced; emergency process documented | Keep checks list synchronized with workflows |
 | GOV-002 | Governance | Change approvals | Risk tiers for changes | P1 | SOC Manager | DONE | docs/governance/change-control.md; artifacts/governance/gov-002_change_approvals_state_YYYY-MM-DD.md | Define low/med/high-risk changes and required reviewers; rollback expectations | Keep reviewer matrix aligned with branch protection and CODEOWNERS |
-| GOV-003 | Governance | Operational cadence | Weekly review ritual | P1 | SOC Manager | TODO | docs/cadence.md | Weekly checklist includes: ops-alerts, DQ gate, backups, CI health, open issues, metrics report | Start simple, then refine |
+| GOV-003 | Governance | Operational cadence | Weekly review ritual | P1 | SOC Manager | DONE | docs/cadence.md; artifacts/governance/weekly_review_YYYY-WW.md | Weekly checklist includes: ops-alerts, DQ gate, backups, CI health, open issues, metrics report | Run weekly and refine after 2-3 cycles |
 
 ### MET (Metrics/KPIs/KRIs)
 
