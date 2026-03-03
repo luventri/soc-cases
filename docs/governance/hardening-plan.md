@@ -8,10 +8,10 @@
 
 | ID | Priority | Task | Owner | ETA | Status |
 |---|---|---|---|---|---|
-| H-01 | P0 | Remove hardcoded secrets from custom scripts/config | Platform Eng | 0-1 day | TODO |
-| H-02 | P0 | Enforce TLS verification (remove insecure `-k` paths) | Platform Eng | 0-1 day | TODO |
-| H-03 | P0 | Fix broken onboarding runbook commands (JSON quoting) | SOC Eng | 0-1 day | TODO |
-| H-04 | P0 | Rotate potentially exposed credentials | SecOps + Platform Eng | 0-1 day | TODO |
+| H-01 | P0 | Remove hardcoded secrets from custom scripts/config | Platform Eng | 0-1 day | DONE (2026-02-28) |
+| H-02 | P0 | Enforce TLS verification (remove insecure `-k` paths) | Platform Eng | 0-1 day | DONE (2026-03-03) |
+| H-03 | P0 | Fix broken onboarding runbook commands (JSON quoting) | SOC Eng | 0-1 day | DONE (2026-03-03) |
+| H-04 | P0 | Rotate potentially exposed credentials | SecOps + Platform Eng | 0-1 day | DONE (2026-03-03) |
 | H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | TODO |
 | H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | TODO |
 | H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | TODO |
@@ -21,9 +21,9 @@
 
 ### H-01: Remove hardcoded secrets
 
-- [ ] Replace embedded credentials in `wazuh-docker/single-node/tools/triage/make_issue_auto.py` with env/file-based secrets.
-- [ ] Remove plaintext defaults from `wazuh-docker/single-node/docker-compose.yml` and `wazuh-docker/single-node/config/wazuh_dashboard/wazuh.yml`.
-- [ ] Confirm no known hardcoded secret patterns remain.
+- [x] Replace embedded credentials in `wazuh-docker/single-node/tools/triage/make_issue_auto.py` with env/file-based secrets.
+- [x] Remove plaintext defaults from `wazuh-docker/single-node/docker-compose.yml` and `wazuh-docker/single-node/config/wazuh_dashboard/wazuh.yml`.
+- [x] Confirm no known hardcoded secret patterns remain.
 
 Commands:
 ```bash
@@ -37,9 +37,9 @@ Acceptance:
 
 ### H-02: Enforce TLS verification
 
-- [ ] Replace `curl -sk`/`-k` in operational scripts with CA-verified requests.
-- [ ] Replace Python SSL contexts that set `CERT_NONE`.
-- [ ] Validate scripts still pass with proper certificates.
+- [x] Replace `curl -sk`/`-k` in operational scripts with CA-verified requests.
+- [x] Replace Python SSL contexts that set `CERT_NONE`.
+- [x] Validate scripts still pass with proper certificates.
 
 Commands:
 ```bash
@@ -53,9 +53,9 @@ Acceptance:
 
 ### H-03: Fix onboarding runbook command quality
 
-- [ ] Repair JSON quoting in onboarding command blocks.
-- [ ] Replace one-liners with heredoc JSON examples where needed.
-- [ ] Validate command snippets by dry-run in lab shell.
+- [x] Repair JSON quoting in onboarding command blocks.
+- [x] Replace one-liners with heredoc JSON examples where needed.
+- [x] Validate command snippets by dry-run in lab shell.
 
 Commands:
 ```bash
@@ -69,9 +69,9 @@ Acceptance:
 
 ### H-04: Rotate exposed credentials
 
-- [ ] Rotate `INDEXER_PASSWORD`, `API_PASSWORD`, dashboard/internal users tied to known defaults.
-- [ ] Update local secret store (`~/.secrets/mini-soc.env`) with new values.
-- [ ] Re-run validation scripts and keep evidence artifacts.
+- [x] Rotate `INDEXER_PASSWORD`, `API_PASSWORD`, dashboard/internal users tied to known defaults.
+- [x] Update local secret store (`~/.secrets/mini-soc.env`) with new values.
+- [x] Re-run validation scripts and keep evidence artifacts.
 
 Commands:
 ```bash
@@ -84,6 +84,11 @@ tools/secrets_audit.sh
 Acceptance:
 - Old credentials invalidated.
 - Verification scripts report PASS after rotation.
+
+Evidence (2026-03-03):
+- `artifacts/platform/health/platform_health_2026-03-03.md`
+- `artifacts/platform/access-control/rbac-users-verify-2026-03-03_092047.log`
+- `artifacts/platform/secrets/secrets_audit_2026-03-03.md`
 
 ### H-05: Fix index date boundary logic
 
@@ -154,4 +159,3 @@ Evidence:
 - artifacts/.../file1
 - artifacts/.../file2
 ```
-

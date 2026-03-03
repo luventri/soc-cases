@@ -7,7 +7,7 @@
 
 **Evidencia:** `artifacts/platform/backup/backup_test_YYYY-MM-DD.md`  
 **Backup destino:** `socbackup@192.168.242.129:/srv/soc-backups/latest`  
-**Última actualización:** 2026-02-24
+**Última actualización:** 2026-03-03
 
 ---
 
@@ -112,70 +112,66 @@ Qué hace:
 - Publica remoto en latest con swap atómico
 
 ## Procedimiento de restore (prueba) y validación
-Restore test (sin tocar producción)
+
+Restore test (sin tocar producción):
+
 ```bash
 cd /home/socadmin/soc-cases
 ./tools/backup_restore_test.sh
 ```
 
-## Criterio de éxito (restore verificado):
+### Criterio de éxito (restore verificado)
 
-- MANIFEST.txt presente
+- `MANIFEST.txt` presente.
+- Directorios `repo/`, `wazuh/`, `docker-volumes/` presentes.
+- Todos los `*.tar.gz` pasan `tar -tzf` sin error.
+- `wazuh/docker-compose.yml` y `wazuh/config/` presentes.
 
-- directorios repo/, wazuh/, docker-volumes/ presentes
+### Evidencia
+Generar `artifacts/platform/backup/backup_test_YYYY-MM-DD.md`.
 
-- todos los *.tar.gz pasan tar -tzf sin error
+## Restore completo (manual, si hiciera falta)
 
-- wazuh/docker-compose.yml y wazuh/config/ presentes
+1. Traer backup `latest/` desde `soc-backup` a un directorio local (p. ej. `/tmp/restore_full`).
+2. Detener stack:
 
-## Evidencia: generar artifacts/platform/backup/backup_test_YYYY-MM-DD.md.
+```bash
+docker compose -f /home/socadmin/wazuh-docker/single-node/docker-compose.yml down
+```
 
-- Restore completo (manual, si hiciera falta)
+3. Restaurar config del host (compose + config dir) desde backup.
+4. Restaurar volúmenes:
+   - Crear si faltan: `docker volume create <name>`
+   - Importar `tar.gz` al volumen:
 
-- Traer backup latest/ desde soc-backup a un directorio local (p.ej. /tmp/restore_full)
-
-- Detener stack:
-
-- docker compose -f /home/socadmin/wazuh-docker/single-node/docker-compose.yml down
-
-- Restaurar config del host (compose + config dir) desde backup.
-
-- Restaurar volúmenes:
-
-- crear si faltan: docker volume create <name>
-
-- importar tar.gz al volumen:
 ```bash
 docker run --rm -v <VOL>:/v -v /tmp/restore_full/docker-volumes:/in ubuntu:24.04 \
   bash -lc "rm -rf /v/* && tar -xzf /in/<VOL>.tar.gz -C /v"
 ```
-- Levantar stack:
+5. Levantar stack:
+
 ```bash
 docker compose -f /home/socadmin/wazuh-docker/single-node/docker-compose.yml up -d
 ```
 
-## Validar:
+### Validar
 
-- docker compose ps
-
-- Dashboard responde (HTTP 302 a login)
-
-- Indexer health cluster (HTTP 200, status green/yellow)
-
-### C) Disaster Recovery (agregar)
+- `docker compose ps`
+- Dashboard responde (`HTTP 302` a login).
+- Indexer health cluster (`HTTP 200`, status `green/yellow`).
 
 ## Recuperación si se pierde soc-core (Disaster Recovery)
 
 Si `soc-core` se pierde, los scripts no estarán disponibles localmente. Procedimiento recomendado:
 
-1) Crear una VM nueva (soc-core2) con Ubuntu Server LTS.
-2) Instalar dependencias mínimas: docker + compose, rsync, git.
-3) Clonar el repositorio del SOC:
+1. Crear una VM nueva (`soc-core2`) con Ubuntu Server LTS.
+2. Instalar dependencias mínimas: docker + compose, rsync, git.
+3. Clonar el repositorio del SOC:
    - `git clone https://github.com/luventri/soc.git`
-4) Configurar acceso SSH por clave hacia `soc-backup` y verificar conectividad.
-5) Ejecutar:
+4. Configurar acceso SSH por clave hacia `soc-backup` y verificar conectividad.
+5. Ejecutar:
    - `./tools/backup_restore_apply.sh --i-understand-this-will-restore`
-6) Levantar Wazuh y validar con `./tools/platform_health.sh`.
+6. Levantar Wazuh y validar con `./tools/platform_health.sh`.
 
 ## Restore APPLY (restauración real en DR)
 

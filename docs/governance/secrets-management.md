@@ -14,7 +14,14 @@ This document defines how secrets/tokens are handled in this repository so they 
 ### Standard secrets file
 - File: `~/.secrets/mini-soc.env`
 - Format: `KEY=VALUE` (one per line)
+- Do not wrap values in quotes unless required by a specific consumer.
 - The repository must never contain secret values.
+
+### Docker Compose `.env` safety
+- For values consumed by Docker Compose from `.env`, avoid raw `$` characters unless escaped as `$$`.
+- Recommended charset for generated passwords in Compose `.env`:
+  - `A-Za-z0-9` plus safe symbols such as `._-!@#%^*+`
+- Rationale: unescaped `$VAR` patterns can be interpreted as variable expansion and break service boot.
 
 ### Loading secrets
 - Shell scripts load secrets with:
@@ -30,6 +37,10 @@ This document defines how secrets/tokens are handled in this repository so they 
 | `LUCIANO_VENTRICE_PASS` | Wazuh / OpenSearch Security user password for additional **Analyst-equivalent** user | `tools/access-control/users.yml`, `docs/governance/access-control.md` |
 | `WAZUH_INDEXER_USER` | OpenSearch/Indexer basic auth username for platform health checks | `tools/platform_health.sh` |
 | `WAZUH_INDEXER_PASS` | OpenSearch/Indexer basic auth password for platform health checks | `tools/platform_health.sh` |
+| `WAZUH_DASHBOARD_USER` | Dashboard service account username (OpenSearch Dashboards) | local stack runtime, `~/.secrets/mini-soc.env` |
+| `WAZUH_DASHBOARD_PASS` | Dashboard service account password (OpenSearch Dashboards) | local stack runtime, `~/.secrets/mini-soc.env` |
+| `WAZUH_API_USER` | Wazuh API username used by dashboard plugin connection | local stack runtime, `~/.secrets/mini-soc.env` |
+| `WAZUH_API_PASS` | Wazuh API password used by dashboard plugin connection | local stack runtime, `~/.secrets/mini-soc.env` |
 
 Notes:
 - This project treats Linux users (e.g., `socadmin`) and Wazuh/OpenSearch users as different identities.
@@ -68,4 +79,3 @@ Notes:
   - and validates `~/.secrets/*` permissions (directory `0700`, files `0600`).
 - Evidence of each audit run must be saved under:
   - `artifacts/platform/secrets/` (sanitized, no secret values)
-

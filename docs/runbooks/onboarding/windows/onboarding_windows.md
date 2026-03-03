@@ -1,6 +1,6 @@
 # Windows Onboarding (Wazuh) — Executable & Auditable
 
-**Document:** `docs/onboarding_windows.md`  
+**Document:** `docs/runbooks/onboarding/windows/onboarding_windows.md`  
 **Repo root (lab):** `/home/socadmin/soc-cases`
 
 ## Objective
@@ -89,7 +89,45 @@ Run on the Linux lab host (repo root), reading indexer auth from `~/.secrets/min
 > **Warning:** do **not** paste Markdown into the terminal. Copy only the commands inside the code block.
 
 ```bash
-cd ~/soc-cases && set -a && source ~/.secrets/mini-soc.env && set +a && HOST="LAPTOP-RH48MVJ8" && DATE="$(date +%F)" && OUT="artifacts/onboarding/windows/M2_security_${DATE}.md" && mkdir -p artifacts/onboarding/windows && TMP="$(mktemp)" && curl -sk -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json'  "https://127.0.0.1:9200/wazuh-archives-4.x-*/_search"  -d "{"size":1,"query":{"bool":{"filter":[{"term":{"data.win.system.computer":"${HOST}"}},{"term":{"data.win.system.channel":"Security"}}]}},"sort":[{"@timestamp":{"order":"desc"}}],"_source":["@timestamp","data.win.system.computer","data.win.system.channel"]}"  > "$TMP" && python3 - "$TMP" "$HOST" > "$OUT" <<'PY'
+cd ~/soc-cases
+set -a
+source ~/.secrets/mini-soc.env
+set +a
+
+HOST="LAPTOP-RH48MVJ8"
+DATE="$(date +%F)"
+OUT="artifacts/onboarding/windows/M2_security_${DATE}.md"
+INDEXER_HOST="wazuh.indexer"
+INDEXER_ADDR="127.0.0.1"
+INDEXER_URL="https://${INDEXER_HOST}:9200"
+INDEXER_CA="/home/socadmin/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+
+mkdir -p artifacts/onboarding/windows
+TMP="$(mktemp)"
+PAYLOAD="$(mktemp)"
+cat > "$PAYLOAD" <<JSON
+{
+  "size": 1,
+  "query": {
+    "bool": {
+      "filter": [
+        { "term": { "data.win.system.computer": "${HOST}" } },
+        { "term": { "data.win.system.channel": "Security" } }
+      ]
+    }
+  },
+  "sort": [{ "@timestamp": { "order": "desc" } }],
+  "_source": ["@timestamp","data.win.system.computer","data.win.system.channel"]
+}
+JSON
+
+curl -sS --cacert "${INDEXER_CA}" --resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}" \
+  -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" \
+  -H 'Content-Type: application/json' \
+  "${INDEXER_URL}/wazuh-archives-4.x-*/_search" \
+  -d @"$PAYLOAD" > "$TMP"
+
+python3 - "$TMP" "$HOST" > "$OUT" <<'PY'
 import json,sys
 j=json.load(open(sys.argv[1])); host=sys.argv[2]
 hits=j.get("hits",{}).get("hits",[])
@@ -104,7 +142,8 @@ dw=src.get("data",{}).get("win",{}).get("system",{}) if isinstance(src.get("data
 print(f"- data.win.system.computer: {dw.get('computer')}")
 print(f"- data.win.system.channel: {dw.get('channel')}")
 PY
-rm -f "$TMP" && echo "OK: wrote $OUT"
+rm -f "$TMP" "$PAYLOAD"
+echo "OK: wrote $OUT"
 ```
 
 **Expected result (PASS)**
@@ -127,7 +166,45 @@ Run on the Linux lab host (repo root), reading indexer auth from `~/.secrets/min
 > **Warning:** do **not** paste Markdown into the terminal. Copy only the commands inside the code block.
 
 ```bash
-cd ~/soc-cases && set -a && source ~/.secrets/mini-soc.env && set +a && HOST="LAPTOP-RH48MVJ8" && DATE="$(date +%F)" && OUT="artifacts/onboarding/windows/M3_sysmon_${DATE}.md" && mkdir -p artifacts/onboarding/windows && TMP="$(mktemp)" && curl -sk -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json'  "https://127.0.0.1:9200/wazuh-archives-4.x-*/_search"  -d "{"size":1,"query":{"bool":{"filter":[{"term":{"data.win.system.computer":"${HOST}"}},{"term":{"data.win.system.channel":"Microsoft-Windows-Sysmon/Operational"}}]}},"sort":[{"@timestamp":{"order":"desc"}}],"_source":["@timestamp","data.win.system.computer","data.win.system.channel"]}"  > "$TMP" && python3 - "$TMP" "$HOST" > "$OUT" <<'PY'
+cd ~/soc-cases
+set -a
+source ~/.secrets/mini-soc.env
+set +a
+
+HOST="LAPTOP-RH48MVJ8"
+DATE="$(date +%F)"
+OUT="artifacts/onboarding/windows/M3_sysmon_${DATE}.md"
+INDEXER_HOST="wazuh.indexer"
+INDEXER_ADDR="127.0.0.1"
+INDEXER_URL="https://${INDEXER_HOST}:9200"
+INDEXER_CA="/home/socadmin/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+
+mkdir -p artifacts/onboarding/windows
+TMP="$(mktemp)"
+PAYLOAD="$(mktemp)"
+cat > "$PAYLOAD" <<JSON
+{
+  "size": 1,
+  "query": {
+    "bool": {
+      "filter": [
+        { "term": { "data.win.system.computer": "${HOST}" } },
+        { "term": { "data.win.system.channel": "Microsoft-Windows-Sysmon/Operational" } }
+      ]
+    }
+  },
+  "sort": [{ "@timestamp": { "order": "desc" } }],
+  "_source": ["@timestamp","data.win.system.computer","data.win.system.channel"]
+}
+JSON
+
+curl -sS --cacert "${INDEXER_CA}" --resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}" \
+  -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" \
+  -H 'Content-Type: application/json' \
+  "${INDEXER_URL}/wazuh-archives-4.x-*/_search" \
+  -d @"$PAYLOAD" > "$TMP"
+
+python3 - "$TMP" "$HOST" > "$OUT" <<'PY'
 import json,sys
 j=json.load(open(sys.argv[1])); host=sys.argv[2]
 hits=j.get("hits",{}).get("hits",[])
@@ -142,7 +219,8 @@ dw=src.get("data",{}).get("win",{}).get("system",{}) if isinstance(src.get("data
 print(f"- data.win.system.computer: {dw.get('computer')}")
 print(f"- data.win.system.channel: {dw.get('channel')}")
 PY
-rm -f "$TMP" && echo "OK: wrote $OUT"
+rm -f "$TMP" "$PAYLOAD"
+echo "OK: wrote $OUT"
 ```
 
 **Expected result (PASS)**
@@ -177,7 +255,45 @@ Generate evidence (sanitized) by querying the latest `syscollector` event for th
 > **Warning:** do **not** paste Markdown into the terminal. Copy only the commands inside the code block.
 
 ```bash
-cd ~/soc-cases && set -a && source ~/.secrets/mini-soc.env && set +a && AGENT_NAME="LAPTOP-RH48MVJ8" && DATE="$(date +%F)" && OUT="artifacts/onboarding/windows/M5_syscollector_${DATE}.md" && mkdir -p artifacts/onboarding/windows && TMP="$(mktemp)" && curl -sk -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json'   "https://127.0.0.1:9200/wazuh-archives-4.x-*/_search"   -d "{"size":1,"query":{"bool":{"filter":[{"term":{"agent.name":"${AGENT_NAME}"}},{"term":{"decoder.name":"syscollector"}}]}},"sort":[{"@timestamp":{"order":"desc"}}],"_source":["@timestamp","agent.id","agent.name","decoder.name","location"]}"   > "$TMP" && python3 - "$TMP" "$AGENT_NAME" > "$OUT" <<'PY'
+cd ~/soc-cases
+set -a
+source ~/.secrets/mini-soc.env
+set +a
+
+AGENT_NAME="LAPTOP-RH48MVJ8"
+DATE="$(date +%F)"
+OUT="artifacts/onboarding/windows/M5_syscollector_${DATE}.md"
+INDEXER_HOST="wazuh.indexer"
+INDEXER_ADDR="127.0.0.1"
+INDEXER_URL="https://${INDEXER_HOST}:9200"
+INDEXER_CA="/home/socadmin/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+
+mkdir -p artifacts/onboarding/windows
+TMP="$(mktemp)"
+PAYLOAD="$(mktemp)"
+cat > "$PAYLOAD" <<JSON
+{
+  "size": 1,
+  "query": {
+    "bool": {
+      "filter": [
+        { "term": { "agent.name": "${AGENT_NAME}" } },
+        { "term": { "decoder.name": "syscollector" } }
+      ]
+    }
+  },
+  "sort": [{ "@timestamp": { "order": "desc" } }],
+  "_source": ["@timestamp","agent.id","agent.name","decoder.name","location"]
+}
+JSON
+
+curl -sS --cacert "${INDEXER_CA}" --resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}" \
+  -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" \
+  -H 'Content-Type: application/json' \
+  "${INDEXER_URL}/wazuh-archives-4.x-*/_search" \
+  -d @"$PAYLOAD" > "$TMP"
+
+python3 - "$TMP" "$AGENT_NAME" > "$OUT" <<'PY'
 import json,sys
 j=json.load(open(sys.argv[1]))
 agent=sys.argv[2]
@@ -194,7 +310,8 @@ print(f"- agent.name: {src.get('agent',{}).get('name')}")
 print(f"- decoder.name: {src.get('decoder',{}).get('name')}")
 print(f"- location: {src.get('location')}")
 PY
-rm -f "$TMP" && echo "OK: wrote $OUT"
+rm -f "$TMP" "$PAYLOAD"
+echo "OK: wrote $OUT"
 ```
 
 **Expected result (PASS)**
@@ -217,7 +334,45 @@ Generate evidence (sanitized) by querying the latest `sca` event for the agent:
 > **Warning:** do **not** paste Markdown into the terminal. Copy only the commands inside the code block.
 
 ```bash
-cd ~/soc-cases && set -a && source ~/.secrets/mini-soc.env && set +a && AGENT_NAME="LAPTOP-RH48MVJ8" && DATE="$(date +%F)" && OUT="artifacts/onboarding/windows/M6_sca_${DATE}.md" && mkdir -p artifacts/onboarding/windows && TMP="$(mktemp)" && curl -sk -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json'   "https://127.0.0.1:9200/wazuh-archives-4.x-*/_search"   -d "{"size":1,"query":{"bool":{"filter":[{"term":{"agent.name":"${AGENT_NAME}"}},{"term":{"decoder.name":"sca"}}]}},"sort":[{"@timestamp":{"order":"desc"}}],"_source":["@timestamp","agent.id","agent.name","decoder.name","location"]}"   > "$TMP" && python3 - "$TMP" "$AGENT_NAME" > "$OUT" <<'PY'
+cd ~/soc-cases
+set -a
+source ~/.secrets/mini-soc.env
+set +a
+
+AGENT_NAME="LAPTOP-RH48MVJ8"
+DATE="$(date +%F)"
+OUT="artifacts/onboarding/windows/M6_sca_${DATE}.md"
+INDEXER_HOST="wazuh.indexer"
+INDEXER_ADDR="127.0.0.1"
+INDEXER_URL="https://${INDEXER_HOST}:9200"
+INDEXER_CA="/home/socadmin/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem"
+
+mkdir -p artifacts/onboarding/windows
+TMP="$(mktemp)"
+PAYLOAD="$(mktemp)"
+cat > "$PAYLOAD" <<JSON
+{
+  "size": 1,
+  "query": {
+    "bool": {
+      "filter": [
+        { "term": { "agent.name": "${AGENT_NAME}" } },
+        { "term": { "decoder.name": "sca" } }
+      ]
+    }
+  },
+  "sort": [{ "@timestamp": { "order": "desc" } }],
+  "_source": ["@timestamp","agent.id","agent.name","decoder.name","location"]
+}
+JSON
+
+curl -sS --cacert "${INDEXER_CA}" --resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}" \
+  -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" \
+  -H 'Content-Type: application/json' \
+  "${INDEXER_URL}/wazuh-archives-4.x-*/_search" \
+  -d @"$PAYLOAD" > "$TMP"
+
+python3 - "$TMP" "$AGENT_NAME" > "$OUT" <<'PY'
 import json,sys
 j=json.load(open(sys.argv[1]))
 agent=sys.argv[2]
@@ -234,7 +389,8 @@ print(f"- agent.name: {src.get('agent',{}).get('name')}")
 print(f"- decoder.name: {src.get('decoder',{}).get('name')}")
 print(f"- location: {src.get('location')}")
 PY
-rm -f "$TMP" && echo "OK: wrote $OUT"
+rm -f "$TMP" "$PAYLOAD"
+echo "OK: wrote $OUT"
 ```
 
 **Expected result (PASS)**
@@ -403,7 +559,7 @@ If you want a single script that generates an auditable artifact + PASS/FAIL, re
 > - Validar mínimo: agent activo/visible; Security events llegan; Sysmon events llegan; syscollector presente; SCA presente; hostname consistente (si hay campo disponible).
 > - No volcar secretos. Si requiere auth (Wazuh API / indexer), leer desde `~/.secrets/` y sanitizar outputs.
 > - Exit code 0 si PASS y !=0 si FAIL.
-> - Entregables: PR con script + update de `docs/onboarding_windows.md` con cómo correrlo + ejemplo de output sanitizado.
+> - Entregables: PR con script + update de `docs/runbooks/onboarding/windows/onboarding_windows.md` con cómo correrlo + ejemplo de output sanitizado.
 ---
 
 ## Quick run (recommended)

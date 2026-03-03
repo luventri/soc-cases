@@ -4,7 +4,7 @@
 **Artefacto:** `artifacts/platform/health/platform_health_YYYY-MM-DD.md`  
 **Script:** `tools/platform_health.sh`  
 **Repo root:** `/home/socadmin/soc-cases`  
-**Última actualización:** 2026-02-24
+**Última actualización:** 2026-03-03
 
 ---
 
@@ -113,36 +113,26 @@ git push origin main
 ```
 
 ## PASS / FAIL
-## PASS (criterios mínimos)
 
+### PASS (criterios mínimos)
 - Docker Compose muestra contenedores del stack en running (sin reinicios constantes).
-
 - El chequeo de indexer health responde OK (HTTP 200 o estado equivalente) cuando está configurado el auth.
+- El artefacto `platform_health_YYYY-MM-DD.md` se generó y contiene:
+  - fecha/hora de ejecución
+  - resumen de checks
+  - evidencia mínima (estado contenedores + health indexer)
+  - sin secretos
 
-- El artefacto platform_health_YYYY-MM-DD.md se generó y contiene:
+### FAIL (ejemplos)
+- Contenedores caídos o en restart loop.
+- Indexer no responde o responde con error (401/403 si auth mal, 5xx si servicio mal).
+- No se genera artefacto o queda vacío/incompleto.
+- Se detectan secretos en texto plano (FAIL automático).
 
-Fecha/hora de ejecución
-
-Resumen de checks
-
-Evidencia mínima (estado contenedores + health indexer)
-
-Sin secretos
-
-FAIL (ejemplos)
-
-Contenedores caídos o en restart loop.
-
-Indexer no responde / responde con error (401/403 si auth mal, 5xx si servicio mal).
-
-No se genera artefacto o queda vacío/incompleto.
-
-Se detectan secretos en texto plano (esto es un FAIL automático).
-
-Ejemplo de output esperado (sanitizado)
-
+### Ejemplo de output esperado (sanitizado)
 Ejemplo ilustrativo. No copiar/pegar como comandos.
 
+```text
 Platform Health - Wazuh single-node
 Date: YYYY-MM-DD
 
@@ -158,40 +148,57 @@ Date: YYYY-MM-DD
 
 Result: PASS
 Artifact: artifacts/platform/health/platform_health_YYYY-MM-DD.md
-Troubleshooting (mínimo)
+```
 
-permission denied al ejecutar el script
+## Troubleshooting (mínimo)
 
-Solución: chmod +x tools/platform_health.sh o ejecutar con bash tools/platform_health.sh.
+### `permission denied` al ejecutar el script
+Solución: `chmod +x tools/platform_health.sh` o ejecutar con `bash tools/platform_health.sh`.
 
-No aparece el artefacto
+### No aparece el artefacto
+- Verificar cwd (estar en el repo), permisos de escritura y path `artifacts/platform/health/`.
+- Ejecutar: `mkdir -p artifacts/platform/health`.
 
-Verificar cwd (estar en el repo), permisos de escritura y path artifacts/platform/health/.
+### `401/403` contra el indexer
+- Revisar credenciales en `~/.secrets/mini-soc.env` y permisos `600`.
+- Confirmar endpoint/puerto correcto del indexer.
 
-Ejecutar: mkdir -p artifacts/platform/health.
+### Timeout / conexión rechazada al indexer
+- Verificar que el contenedor del indexer está running.
+- Revisar puertos publicados y firewall local.
 
-401/403 contra el indexer
+### Dashboard muestra "No API connections. Add a new one."
+Posible causa:
+- El archivo persistido `data/wazuh/config/wazuh.yml` dentro del contenedor tiene `hosts:` con credenciales desincronizadas tras una rotación.
 
-Revisar credenciales en ~/.secrets/mini-soc.env y permisos 600.
+Recuperación rápida:
 
-Confirmar endpoint/puerto correcto del indexer.
+```bash
+cd /home/socadmin/wazuh-docker/single-node
+docker compose up -d --force-recreate wazuh.dashboard
+docker exec -i single-node-wazuh.dashboard-1 sh -lc \
+  'f=/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml; \
+   sed -i "/^hosts:/,\$d" "$f"; \
+   /wazuh_app_config.sh'
+docker restart single-node-wazuh.dashboard-1
+```
 
-Timeout / conexión rechazada al indexer
+Verificación:
 
-Verificar que el contenedor del indexer está running.
+```bash
+docker exec -i single-node-wazuh.dashboard-1 sh -lc \
+  "curl -sk -o /dev/null -w 'HTTP=%{http_code}\n' https://127.0.0.1:5601/app/status"
+```
 
-Revisar puertos publicados y firewall local.
+Resultado esperado:
+- `HTTP=302` (o `200` según estado/login) y la tabla de Server APIs vuelve a mostrar conexión activa.
 
-Notas de seguridad (bind 0.0.0.0)
+## Notas de seguridad (bind 0.0.0.0)
 
-Evitar exponer servicios del stack en 0.0.0.0 salvo que sea estrictamente necesario.
+Evitar exponer servicios del stack en `0.0.0.0` salvo que sea estrictamente necesario.
 
-Si se publica 0.0.0.0:5601 (dashboard) o 0.0.0.0:9200 (indexer), aplicar como mínimo:
-
-Restricción por firewall/ACL a IPs de administración.
-
-Autenticación fuerte (y rotación de credenciales).
-
-Preferir acceso vía VPN/SSH tunnel.
-
-No incluir URLs internas sensibles ni credenciales en artefactos o issues.
+Si se publica `0.0.0.0:5601` (dashboard) o `0.0.0.0:9200` (indexer), aplicar como mínimo:
+- Restricción por firewall/ACL a IPs de administración.
+- Autenticación fuerte (y rotación de credenciales).
+- Preferir acceso vía VPN/SSH tunnel.
+- No incluir URLs internas sensibles ni credenciales en artefactos o issues.
