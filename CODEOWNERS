@@ -1,0 +1,19 @@
+# CODEOWNERS
+#
+# Role mapping (current home SOC operators):
+# SOC Engineer: @luventri
+# SOC Manager: @luventri
+# Documentation/Knowledge Manager: @luventri
+
+# Tools and operational scripts
+tools/** @luventri
+
+# Documentation and governance
+docs/** @luventri
+
+# CI/CD and security policies
+.github/workflows/** @luventri
+
+# Artifacts:
+# No strict owner assignment by policy.
+# Still requires secret-safe review before merge.
