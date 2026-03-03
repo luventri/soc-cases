@@ -15,7 +15,7 @@
 | H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | DONE (2026-03-03) |
 | H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | DONE (2026-03-03) |
 | H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | DONE (2026-03-03) |
-| H-08 | P2 | Add continuous lint/audit gates (shell/yaml/secrets) | DevSecOps | 2 days | TODO |
+| H-08 | P2 | Add continuous lint/audit gates (shell/yaml/secrets) | DevSecOps | 2 days | DONE (2026-03-03) |
 
 ## 2) Execution Checklist
 
@@ -146,9 +146,9 @@ Evidence (2026-03-03):
 
 ### H-08: Continuous lint/audit controls
 
-- [ ] Add/enable `shellcheck` for SOC scripts.
-- [ ] Add/enable `yamllint` for workflows/compose.
-- [ ] Keep periodic secrets audit evidence in artifacts.
+- [x] Add/enable `shellcheck` for SOC scripts.
+- [x] Add/enable `yamllint` for workflows/compose.
+- [x] Keep periodic secrets audit evidence in artifacts.
 
 Commands:
 ```bash
@@ -159,6 +159,12 @@ tools/platform/secrets_audit.sh
 
 Acceptance:
 - Syntax/lint/security checks run repeatedly and produce auditable outputs.
+
+Evidence (2026-03-03):
+- New CI workflow `.github/workflows/lint-audit.yml`:
+  - `bash -n` + `shellcheck --severity=error` on `tools/**/*.sh`
+  - `yamllint` on `.github/workflows` and `tools/access-control/users.yml`
+  - periodic `tools/platform/secrets_audit.sh` run and artifact upload (`artifacts/platform/secrets/`)
 
 ## 3) Daily Tracking Update Template
 

@@ -1,0 +1,72 @@
+name: Lint and audit controls
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install lint dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y shellcheck yamllint
+
+      - name: Shell syntax check (bash -n)
+        shell: bash
+        run: |
+          set -euo pipefail
+          find tools -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
+
+      - name: ShellCheck (error severity)
+        shell: bash
+        run: |
+          set -euo pipefail
+          find tools -type f -name '*.sh' -print0 | xargs -0 -n1 shellcheck --severity=error -x
+
+      - name: Yamllint (workflows + tool YAML)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .yamllint-ci.yml <<'YAML'
+          extends: default
+          rules:
+            line-length: disable
+            truthy: disable
+          YAML
+          yamllint -c .yamllint-ci.yml .github/workflows tools/access-control/users.yml
+
+      - name: Prepare local secrets placeholder for audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${HOME}/.secrets"
+          chmod 700 "${HOME}/.secrets"
+          : > "${HOME}/.secrets/mini-soc.env"
+          chmod 600 "${HOME}/.secrets/mini-soc.env"
+
+      - name: Run periodic secrets audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./tools/platform/secrets_audit.sh
+
+      - name: Upload secrets audit artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: secrets-audit
+          path: artifacts/platform/secrets/
+          if-no-files-found: error
