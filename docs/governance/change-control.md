@@ -130,8 +130,15 @@ gh api repos/luventri/SOC/branches/main/protection/required_status_checks --jq '
 - Implemented in repo:
   - `docs/governance/change-control.md`
   - `CODEOWNERS`
-- Manual step pending:
-  - Apply/verify branch protection in GitHub settings (current `gh` auth/API status documented in artifacts).
+- Applied:
+  - Branch protection for `main` configured via GitHub API with:
+    - PR required
+    - minimum 1 approval
+    - code owner review required
+    - required checks enforced
+    - admins enforced
+    - force-push and deletion disabled
 
 Evidence:
 - `artifacts/governance/gov-001_branch_protection_state_YYYY-MM-DD.md`
+- `artifacts/governance/gov-001_branch_protection_applied_YYYY-MM-DD.md`
