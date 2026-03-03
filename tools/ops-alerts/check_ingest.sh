@@ -42,13 +42,7 @@ if [[ "${INDEXER_URL}" == "https://${INDEXER_HOST}:9200"* ]]; then
   CURL_TLS+=(--resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}")
 fi
 
-INDEX="wazuh-archives-4.x-$(date +%Y.%m.%d)"
-
-HTTP_IDX="$(curl -sS "${CURL_TLS[@]}" -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -o /dev/null -w "%{http_code}" "${INDEXER_URL}/${INDEX}" || true)"
-if [[ "${HTTP_IDX}" != "200" ]]; then
-  echo "FAIL: index not available today: ${INDEX} (HTTP=${HTTP_IDX})"
-  exit 2
-fi
+ARCHIVES_INDEX="${OPS_ARCHIVES_INDEX:-wazuh-archives-4.x-*}"
 
 IFS=',' read -r -a CH_ARR <<< "${CHANNELS_CSV}"
 CH_JSON="["
@@ -69,7 +63,7 @@ query_latest() {
   "query": {
     "bool": {
       "filter": [
-        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m" } } },
+        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m", "lte": "now" } } },
         { "term": { "data.win.system.computer": "${HOSTNAME}" } },
         { "terms": { "data.win.system.channel": ${CH_JSON} } }
       ]
@@ -87,7 +81,7 @@ JSON
   "query": {
     "bool": {
       "filter": [
-        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m" } } },
+        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m", "lte": "now" } } },
         { "term": { "data.win.system.computer": "${HOSTNAME}" } }
       ]
     }
@@ -103,7 +97,7 @@ JSON
   tmp="$(mktemp)"
   http="$(curl -sS "${CURL_TLS[@]}" -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json' \
     -o "${tmp}" -w "%{http_code}" \
-    "${INDEXER_URL}/${INDEX}/_search" -d "${payload}" || true)"
+    "${INDEXER_URL}/${ARCHIVES_INDEX}/_search" -d "${payload}" || true)"
   echo "${http}:${tmp}"
 }
 
@@ -113,11 +107,12 @@ crit_tmp="${crit#*:}"
 
 if [[ "${crit_http}" != "200" ]]; then
   echo "FAIL: indexer query failed (HTTP=${crit_http})"
-  echo "INFO: ${INDEX} host=${HOSTNAME} window=${WINDOW_MIN}m channels=${CHANNELS_CSV}"
+  echo "INFO: index=${ARCHIVES_INDEX} host=${HOSTNAME} window=${WINDOW_MIN}m channels=${CHANNELS_CSV}"
   rm -f "${crit_tmp}"
   exit 2
 fi
 
+set +e
 python3 - "${crit_tmp}" "${HOSTNAME}" "${WINDOW_MIN}" "${CHANNELS_CSV}" <<'PY'
 import json,sys
 path,host,win,channels = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
@@ -134,6 +129,7 @@ print(f"FAIL: no CRITICAL events for host={host} in last {win}m (channels={chann
 sys.exit(1)
 PY
 rc=$?
+set -e
 rm -f "${crit_tmp}"
 
 if [[ "${rc}" -eq 0 ]]; then

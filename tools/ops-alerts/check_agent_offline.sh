@@ -39,13 +39,7 @@ if [[ "${INDEXER_URL}" == "https://${INDEXER_HOST}:9200"* ]]; then
   CURL_TLS+=(--resolve "${INDEXER_HOST}:9200:${INDEXER_ADDR}")
 fi
 
-INDEX="wazuh-archives-4.x-$(date +%Y.%m.%d)"
-
-HTTP_IDX="$(curl -sS "${CURL_TLS[@]}" -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -o /dev/null -w "%{http_code}" "${INDEXER_URL}/${INDEX}" || true)"
-if [[ "${HTTP_IDX}" != "200" ]]; then
-  echo "FAIL: index not available today: ${INDEX} (HTTP=${HTTP_IDX})"
-  exit 2
-fi
+ARCHIVES_INDEX="${OPS_ARCHIVES_INDEX:-wazuh-archives-4.x-*}"
 
 PAYLOAD="$(cat <<JSON
 {
@@ -53,7 +47,7 @@ PAYLOAD="$(cat <<JSON
   "query": {
     "bool": {
       "filter": [
-        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m" } } },
+        { "range": { "@timestamp": { "gte": "now-${WINDOW_MIN}m", "lte": "now" } } },
         { "term": { "data.win.system.computer": "${HOSTNAME}" } }
       ]
     }
@@ -67,7 +61,7 @@ JSON
 TMP="$(mktemp)"
 HTTP="$(curl -sS "${CURL_TLS[@]}" -u "${WAZUH_INDEXER_USER}:${WAZUH_INDEXER_PASS}" -H 'Content-Type: application/json' \
   -o "${TMP}" -w "%{http_code}" \
-  "${INDEXER_URL}/${INDEX}/_search" -d "${PAYLOAD}" || true)"
+  "${INDEXER_URL}/${ARCHIVES_INDEX}/_search" -d "${PAYLOAD}" || true)"
 
 if [[ "${HTTP}" != "200" ]]; then
   echo "FAIL: indexer query failed (HTTP=${HTTP})"

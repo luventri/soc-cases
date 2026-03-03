@@ -12,7 +12,7 @@
 | H-02 | P0 | Enforce TLS verification (remove insecure `-k` paths) | Platform Eng | 0-1 day | DONE (2026-03-03) |
 | H-03 | P0 | Fix broken onboarding runbook commands (JSON quoting) | SOC Eng | 0-1 day | DONE (2026-03-03) |
 | H-04 | P0 | Rotate potentially exposed credentials | SecOps + Platform Eng | 0-1 day | DONE (2026-03-03) |
-| H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | TODO |
+| H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | DONE (2026-03-03) |
 | H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | TODO |
 | H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | TODO |
 | H-08 | P2 | Add continuous lint/audit gates (shell/yaml/secrets) | DevSecOps | 2 days | TODO |
@@ -92,8 +92,8 @@ Evidence (2026-03-03):
 
 ### H-05: Fix index date boundary logic
 
-- [ ] Update checks to query wildcard indices + time range, not only `YYYY.MM.DD`.
-- [ ] Validate around UTC boundary (late-night local time test).
+- [x] Update checks to query wildcard indices + time range, not only `YYYY.MM.DD`.
+- [x] Validate around UTC boundary (late-night local time test).
 
 Target files:
 - `tools/ops-alerts/check_ingest.sh`
@@ -101,6 +101,10 @@ Target files:
 
 Acceptance:
 - No false negatives caused by day rollover.
+
+Evidence (2026-03-03):
+- `tools/ops-alerts/check_ingest.sh` now queries `wazuh-archives-4.x-*` with `@timestamp` range.
+- `tools/ops-alerts/check_agent_offline.sh` now queries `wazuh-archives-4.x-*` with `@timestamp` range.
 
 ### H-06: Harden RBAC verification
 
