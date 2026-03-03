@@ -1,0 +1,15 @@
+M1R=PASS
+AGENT_ID=002
+AGENT_API_NAME=soc-linux-endpoint
+AGENT_LAST_KEEPALIVE=2026-03-03T16:54:34+00:00
+M5R=PASS
+SYSCOLLECTOR_HOSTNAME=soc-linux-endpoint
+M6R=WARN
+SUMMARY:
+- M1 Agent active         : PASS -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M1_agent_active_2026-03-03.md
+- M2 Ingest freshness     : PASS -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M2_ingest_freshness_2026-03-03.md
+- M3 Linux log signal     : PASS -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M3_linux_log_signal_2026-03-03.md
+- M4 Identity consistency : PASS -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M4_identity_consistency_2026-03-03.md
+- M5 Syscollector         : PASS -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M5_syscollector_2026-03-03.md
+- M6 SCA                  : WARN -> /home/socadmin/soc-cases/artifacts/onboarding/linux/M6_sca_2026-03-03.md
+FINAL: PASS_WITH_WARN (MUST passed, SCA warning allowed)

@@ -60,3 +60,33 @@ Install and enroll a Linux endpoint agent into Wazuh Manager and verify telemetr
 
 ## Next step
 Proceed to `OLA1-LNX-003` (Linux DQ gate with pass/fail checks and issue-on-fail behavior).
+
+---
+
+## OLA1-LNX-003 Linux DQ gate
+
+### Gate runner
+- `tools/onboarding/linux/linux_onboarding_audit.sh --agent soc-linux-endpoint --date YYYY-MM-DD`
+
+### Checks implemented
+- `M1` Agent active (Wazuh API, keepalive freshness)
+- `M2` Ingest freshness in `wazuh-archives-*` (last 60m)
+- `M3` Linux log signal present (`pam`/`sudo`/`systemd` in last 24h)
+- `M4` Identity consistency (expected agent vs API vs latest event vs syscollector hostname)
+- `M5` Syscollector data + freshness (Wazuh API)
+- `M6` SCA data freshness (Wazuh API)
+
+### Result policy
+- MUST checks: `M1..M5`
+- `M6` currently allowed as `WARN` while SCA baseline stabilizes.
+- Exit code `0`: MUST checks pass (final `PASS` or `PASS_WITH_WARN`).
+- Exit code `1`: one or more MUST checks fail (final `FAIL`, issue-on-fail path).
+
+### Artifacts
+- `artifacts/onboarding/linux/M1_*.md` ... `M6_*.md`
+- `artifacts/onboarding/linux/gate_run_YYYY-MM-DD.log`
+- On FAIL: `artifacts/onboarding/linux/gate_fail_YYYY-MM-DD.md`
+
+### Issue on fail
+- Dedupe-safe issue creation script:
+  - `tools/onboarding/linux/create_issue_on_fail.sh`
