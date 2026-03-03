@@ -14,7 +14,7 @@
 | H-04 | P0 | Rotate potentially exposed credentials | SecOps + Platform Eng | 0-1 day | DONE (2026-03-03) |
 | H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | DONE (2026-03-03) |
 | H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | DONE (2026-03-03) |
-| H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | TODO |
+| H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | DONE (2026-03-03) |
 | H-08 | P2 | Add continuous lint/audit gates (shell/yaml/secrets) | DevSecOps | 2 days | TODO |
 
 ## 2) Execution Checklist
@@ -124,9 +124,9 @@ Evidence (2026-03-03):
 
 ### H-07: Harden CI policy
 
-- [ ] Pin GitHub Actions to immutable SHAs where feasible.
-- [ ] Add secret scanning and insecure-pattern checks as required PR gates.
-- [ ] Block merges on hardcoded credentials or new TLS bypasses.
+- [x] Pin GitHub Actions to immutable SHAs where feasible.
+- [x] Add secret scanning and insecure-pattern checks as required PR gates.
+- [x] Block merges on hardcoded credentials or new TLS bypasses.
 
 Commands:
 ```bash
@@ -136,6 +136,13 @@ rg -n "uses:\\s*[^@]+@v[0-9]+" soc-cases/.github wazuh-docker/.github
 
 Acceptance:
 - CI enforces security baseline before merge.
+
+Evidence (2026-03-03):
+- `.github/workflows/secret-scanning-gitleaks.yml` pinned to immutable SHAs (`actions/checkout`, `gitleaks-action`).
+- New `.github/workflows/security-policy.yml` fails on:
+  - unpinned actions (`@vN`) in workflow files,
+  - known hardcoded credential patterns in `tools/`,
+  - insecure TLS bypass patterns in `tools/`.
 
 ### H-08: Continuous lint/audit controls
 

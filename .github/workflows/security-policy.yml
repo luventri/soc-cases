@@ -1,0 +1,47 @@
+name: Security policy checks
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Enforce pinned GitHub Actions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n 'uses:\s*[^@[:space:]]+@v[0-9]+' .github/workflows; then
+            echo "FAIL: Found unpinned actions using mutable tags (@vN)."
+            exit 1
+          fi
+          echo "PASS: All actions are pinned to immutable SHAs."
+
+      - name: Block known hardcoded credentials patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n 'SecretPassword|MyS3cr37|admin:SecretPassword|password:\s*".+"' tools; then
+            echo "FAIL: Hardcoded credential-like patterns found in tools/."
+            exit 1
+          fi
+          echo "PASS: No known hardcoded credential patterns found in tools/."
+
+      - name: Block insecure TLS bypass patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+          if rg -n 'curl[^\n]*\s-(k|sk)\b|CERT_NONE|check_hostname\s*=\s*False' tools; then
+            echo "FAIL: Insecure TLS bypass patterns found in tools/."
+            exit 1
+          fi
+          echo "PASS: No insecure TLS bypass patterns found in tools/."
