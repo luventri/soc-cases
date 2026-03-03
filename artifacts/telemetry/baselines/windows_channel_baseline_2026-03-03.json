@@ -1,0 +1,52 @@
+{
+  "reference_date": "2026-03-03",
+  "window_start": "2026-02-17",
+  "window_end": "2026-03-03",
+  "latest_coverage_date": "2026-02-27",
+  "reports_in_window": 1,
+  "drift_threshold_pct": 40.0,
+  "min_baseline_samples": 3,
+  "status": "WARN",
+  "channels": [
+    {
+      "channel": "Security",
+      "latest_count": 5995,
+      "baseline_mean": 0.0,
+      "baseline_median": 0.0,
+      "history_samples": 0,
+      "drift_pct": 100.0,
+      "status": "WARN",
+      "action": "Collect more daily coverage reports to stabilize baseline"
+    },
+    {
+      "channel": "Microsoft-Windows-Sysmon/Operational",
+      "latest_count": 2587,
+      "baseline_mean": 0.0,
+      "baseline_median": 0.0,
+      "history_samples": 0,
+      "drift_pct": 100.0,
+      "status": "WARN",
+      "action": "Collect more daily coverage reports to stabilize baseline"
+    },
+    {
+      "channel": "System",
+      "latest_count": 119,
+      "baseline_mean": 0.0,
+      "baseline_median": 0.0,
+      "history_samples": 0,
+      "drift_pct": 100.0,
+      "status": "WARN",
+      "action": "Collect more daily coverage reports to stabilize baseline"
+    },
+    {
+      "channel": "Application",
+      "latest_count": 94,
+      "baseline_mean": 0.0,
+      "baseline_median": 0.0,
+      "history_samples": 0,
+      "drift_pct": 100.0,
+      "status": "WARN",
+      "action": "Collect more daily coverage reports to stabilize baseline"
+    }
+  ]
+}

@@ -59,3 +59,45 @@ Cada `weekly_metrics_YYYY-WW.md` debe incluir:
 ## Operación recomendada
 - Ejecutar 1 vez por semana durante la revisión GOV-003.
 - Si el resultado es `WARN` o `FAIL`, registrar acciones en el artifact semanal de governance.
+
+---
+
+# MET-002 Trend Tracking (Baselines + Drift)
+
+## Objetivo
+Establecer baseline de canales críticos de Windows y detectar desvíos relevantes de volumen para disparar investigación temprana.
+
+## Alcance (MET-002)
+- Canales iniciales: `Security`, `Microsoft-Windows-Sysmon/Operational`, `System`, `Application`.
+- Fuente: artifacts diarios de coverage (`coverage_24h_YYYY-MM-DD.md`).
+- Salida: baseline + drift con estado (`PASS/WARN/FAIL`) y acción por canal.
+
+## Runner
+Script:
+- `tools/metrics/windows_channel_baseline_drift.sh`
+
+Uso:
+- Corrida por defecto (fecha UTC actual):
+  - `tools/metrics/windows_channel_baseline_drift.sh`
+- Corrida para fecha específica:
+  - `tools/metrics/windows_channel_baseline_drift.sh 2026-03-03`
+
+Configuración opcional por env:
+- `MET_BASELINE_LOOKBACK_DAYS` (default `14`)
+- `MET_DRIFT_THRESHOLD_PCT` (default `40`)
+- `MET_MIN_BASELINE_SAMPLES` (default `3`)
+- `MET_CHANNELS_CSV` (default canales críticos de Windows)
+- `MET_CREATE_ISSUE_ON_FAIL` (`1` para intentar crear GitHub Issue en FAIL)
+
+## Evidencia generada
+- `artifacts/telemetry/baselines/windows_channel_baseline_YYYY-MM-DD.json`
+- `artifacts/telemetry/baselines/windows_channel_baseline_drift_YYYY-MM-DD.md`
+
+## Criterio de evaluación
+- `PASS`: baseline suficiente y sin desvíos sobre umbral.
+- `WARN`: baseline todavía inmaduro (muestras insuficientes).
+- `FAIL`: desvío mayor al umbral en canales con volumen significativo.
+
+## Operación recomendada
+- Ejecutar junto con `MET-001` en la revisión semanal GOV-003.
+- Ante `FAIL`, abrir/actualizar issue de remediación y validar en la siguiente corrida.

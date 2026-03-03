@@ -50,7 +50,7 @@
 | id | area | capability | sub-capability | priority | owner_role | status | evidence_paths | acceptance_criteria (DoD) | next_action |
 |---|---|---|---|---|---|---|---|---|---|
 | MET-001 | Metrics | Weekly SLO pack | Required weekly metrics | P0 | Telemetry Owner | DONE | docs/governance/metrics.md; tools/metrics/weekly_metrics.sh; artifacts/metrics/weekly_metrics_YYYY-WW.md | Weekly report exists with thresholds and actions (MTTD/MTTR optional, but health KPIs required) | Run weekly with GOV-003 and tune thresholds after 2-3 cycles |
-| MET-002 | Metrics | Trend tracking | Baselines & drift | P1 | Telemetry Owner | TODO | artifacts/telemetry/baselines/*; docs/governance/metrics.md | Baselines for key channels, and alert on deviation | Start with Windows, extend to Linux/pfSense |
+| MET-002 | Metrics | Trend tracking | Baselines & drift | P1 | Telemetry Owner | DONE | tools/metrics/windows_channel_baseline_drift.sh; artifacts/telemetry/baselines/*; docs/governance/metrics.md | Baselines for key channels, and alert on deviation | Start with Windows, extend to Linux/pfSense |
 
 ---
 
@@ -77,7 +77,7 @@ Goal: not only SIEM+single Windows endpoint. Add Linux endpoint and perimeter te
 | id | area | capability | sub-capability | priority | owner_role | status | evidence_paths | acceptance_criteria (DoD) | next_action |
 |---|---|---|---|---|---|---|---|---|---|
 | OLA1-OPS-001 | Wave 1 | Change control | Implement GOV-001 | P0 | SOC Manager + SOC Engineer | DONE | docs/governance/change-control.md; CODEOWNERS; artifacts/governance/gov-001_branch_protection_applied_YYYY-MM-DD.md | PR required + required checks + reviewers | Continue with MET-001 before OLA1-LNX/NET scale-out |
-| OLA1-OPS-002 | Wave 1 | Metrics | Implement MET-001 weekly report | P0 | Telemetry Owner | TODO | docs/governance/metrics.md; tools/metrics/weekly_metrics.sh | Weekly report produced and stored in artifacts | Use existing scripts + new sources |
+| OLA1-OPS-002 | Wave 1 | Metrics | Implement MET-001 weekly report | P0 | Telemetry Owner | DONE | docs/governance/metrics.md; tools/metrics/weekly_metrics.sh | Weekly report produced and stored in artifacts | Keep weekly generation discipline and connect with MET-002 drift tracking |
 
 ---
 
