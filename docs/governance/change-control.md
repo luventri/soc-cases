@@ -38,6 +38,16 @@ Minimum ownership coverage:
 - `artifacts/**` -> no strict owner; still subject to review and secret controls
 
 ## Risk-based change policy
+All PRs must classify risk (`low|medium|high`) and comply with the approval matrix below.
+
+### Approval matrix (required)
+
+| Risk | Typical scope | Minimum approvals | Role expectation | Mandatory PR contents |
+|---|---|---:|---|---|
+| Low | Docs-only, comments, non-functional cleanup | 1 | Any code owner | Summary + impacted paths |
+| Medium | Script logic, thresholds, runbook command changes | 1 | Area code owner (SOC Engineer preferred) | Validation evidence + rollback note |
+| High | Auth/secrets, CI policy/workflows, RBAC, stack behavior | 1 | SOC Manager policy approval + SOC Engineer technical approval (can be same person in home SOC) | Validation evidence + explicit rollback plan + post-change verification evidence |
+
 ### Low risk
 Examples:
 - docs updates
@@ -73,6 +83,25 @@ Requirements:
 - required checks pass
 - explicit test evidence + rollback plan mandatory
 - post-change verification evidence mandatory
+
+## Rollback expectations
+- Every medium/high-risk PR must include:
+  - rollback trigger condition
+  - rollback steps (exact commands/paths)
+  - expected rollback verification
+- If rollback is not technically possible, PR must document compensating controls and recovery path.
+
+## Release notes and evidence requirements
+- Every merged PR must leave an auditable note in one of:
+  - PR description (preferred), or
+  - linked governance/runbook update.
+- Minimum required metadata:
+  - purpose/scope
+  - risk tier
+  - files changed (high level)
+  - validation commands executed
+  - evidence artifact paths (if applicable)
+- Medium/high-risk changes must include at least one reproducible evidence path under `artifacts/` or explicit rationale if no artifact applies.
 
 ## Break-glass (hotfix) procedure
 Use only for service restoration or active security incident.
