@@ -69,6 +69,36 @@ INDEXER_BASE_URL="https://${INDEXER_HOST}:9200"
 INDEXER_RESOLVE_ARG="--resolve ${INDEXER_HOST}:9200:${INDEXER_ADDR}"
 DASHBOARDS_RESOLVE_ARG="--resolve ${DASHBOARD_HOST}:443:${DASHBOARD_ADDR}"
 
+detect_osd_version() {
+  local user="$1"
+  local pass="$2"
+  local tmp code detected
+  tmp="$(mktemp)"
+  code="$(curl -sS --cacert "${DASHBOARD_CA}" ${DASHBOARDS_RESOLVE_ARG} \
+    -u "${user}:${pass}" \
+    -H "osd-xsrf: true" \
+    -o "${tmp}" -w "%{http_code}" \
+    "${DASHBOARDS_URL}/api/status" || true)"
+  if [[ "${code}" != "200" ]]; then
+    rm -f "${tmp}"
+    return 1
+  fi
+  detected="$(python3 - "${tmp}" <<'PY'
+import json,sys
+try:
+    data=json.load(open(sys.argv[1],"r",encoding="utf-8"))
+except Exception:
+    print("")
+    sys.exit(0)
+print((data.get("version") or {}).get("number",""))
+PY
+)"
+  rm -f "${tmp}"
+  [[ -n "${detected}" ]] || return 1
+  OSD_VERSION="${detected}"
+  return 0
+}
+
 admin_curl_to_file() {
   local url="$1"
   local outfile="$2"
@@ -269,6 +299,18 @@ if [ -z "${MAPPED}" ]; then
   exit 0
 fi
 
+# Detect OpenSearch Dashboards version dynamically if possible (fallback to default/env OSD_VERSION).
+while read -r _user _pass_env; do
+  [ -n "${_user}" ] || continue
+  [ -n "${_pass_env}" ] || continue
+  _pass="$(get_secret "${_pass_env}")"
+  [ -n "${_pass}" ] || continue
+  if detect_osd_version "${_user}" "${_pass}"; then
+    break
+  fi
+done <<< "$MAPPED"
+log "OSD_VERSION_EFFECTIVE: ${OSD_VERSION}"
+
 while read -r USER PASS_ENV; do
   [ -n "$USER" ] || continue
   [ -n "$PASS_ENV" ] || continue
@@ -334,6 +376,7 @@ log ""
 # --- Assertions (only if functional tests ran and emitted the labels) ---
 # If a label is not present in OUT, we do not assert it (keeps script usable when tests are skipped).
 if grep -q "saved_objects_find HTTP=" "$OUT"; then assert_all_http_eq "saved_objects_find" "200"; fi
+if grep -q "wazuh_search HTTP=" "$OUT"; then assert_all_http_eq "wazuh_search" "200"; fi
 if grep -q "wazuh_write HTTP=" "$OUT"; then assert_all_http_eq "wazuh_write" "403"; fi
 if grep -q "security_api_rolesmapping HTTP=" "$OUT"; then assert_all_http_eq "security_api_rolesmapping" "403"; fi
 if grep -q "security_api_roles HTTP=" "$OUT"; then assert_all_http_eq "security_api_roles" "403"; fi

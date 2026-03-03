@@ -13,7 +13,7 @@
 | H-03 | P0 | Fix broken onboarding runbook commands (JSON quoting) | SOC Eng | 0-1 day | DONE (2026-03-03) |
 | H-04 | P0 | Rotate potentially exposed credentials | SecOps + Platform Eng | 0-1 day | DONE (2026-03-03) |
 | H-05 | P1 | Fix index date logic to avoid UTC/day-boundary false FAIL | Platform Eng | 1-2 days | DONE (2026-03-03) |
-| H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | TODO |
+| H-06 | P1 | Harden RBAC verification assertions/version handling | Platform Eng | 1-2 days | DONE (2026-03-03) |
 | H-07 | P1 | Harden CI policies (pin actions, block insecure patterns) | DevSecOps | 2-3 days | TODO |
 | H-08 | P2 | Add continuous lint/audit gates (shell/yaml/secrets) | DevSecOps | 2 days | TODO |
 
@@ -108,15 +108,19 @@ Evidence (2026-03-03):
 
 ### H-06: Harden RBAC verification
 
-- [ ] Detect OpenSearch Dashboards version dynamically when possible.
-- [ ] Add assertion for `wazuh_search HTTP=200` in verify stage.
-- [ ] Keep negative tests (`write/security api/savedobject create`) strict.
+- [x] Detect OpenSearch Dashboards version dynamically when possible.
+- [x] Add assertion for `wazuh_search HTTP=200` in verify stage.
+- [x] Keep negative tests (`write/security api/savedobject create`) strict.
 
 Target file:
 - `tools/access-control/verify-users.sh`
 
 Acceptance:
 - Script fails on real privilege regressions and passes on expected RO profile.
+
+Evidence (2026-03-03):
+- `tools/access-control/verify-users.sh` now auto-detects OSD version via `/api/status` when credentials allow it.
+- `artifacts/platform/access-control/rbac-users-verify-2026-03-03_094438.log` (PASS; includes `OSD_VERSION_EFFECTIVE` and `wazuh_search HTTP=200` checks).
 
 ### H-07: Harden CI policy
 
