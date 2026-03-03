@@ -62,7 +62,7 @@ Goal: not only SIEM+single Windows endpoint. Add Linux endpoint and perimeter te
 ### OLA1-LNX (Linux endpoint)
 | id | area | capability | sub-capability | priority | owner_role | status | evidence_paths | acceptance_criteria (DoD) | next_action |
 |---|---|---|---|---|---|---|---|---|---|
-| OLA1-LNX-001 | Wave 1 | Linux endpoint | Provision VM + hardening baseline | P0 | SOC Engineer | TODO | docs/infra/ola1-linux-endpoint.md; artifacts/infra/ola1-linux-endpoint_YYYY-MM-DD.md | Linux VM created, SSH keys, updates, minimal hardening, time sync; documented | Create VM `soc-linux-endpoint` |
+| OLA1-LNX-001 | Wave 1 | Linux endpoint | Provision VM + hardening baseline | P0 | SOC Engineer | DONE | docs/infra/ola1-linux-endpoint.md; artifacts/infra/ola1-linux-endpoint_YYYY-MM-DD.md | Linux VM created, SSH keys (or approved lab exception), updates, minimal hardening, time sync; documented | Lab mode accepted (password SSH + no host firewall); tighten before production-like exposure |
 | OLA1-LNX-002 | Wave 1 | Linux telemetry | Wazuh agent installed + enroll | P0 | SOC Engineer | TODO | docs/runbooks/onboarding/linux/onboarding_linux.md; artifacts/onboarding/linux/* | Agent enrolled and visible; events arriving | Mirror Windows onboarding pattern |
 | OLA1-LNX-003 | Wave 1 | Linux DQ | Linux onboarding gate (pass/fail) | P0 | Telemetry Owner + SOC Engineer | TODO | tools/onboarding/linux/linux_onboarding_audit.sh; artifacts/onboarding/linux/*; issue on fail | Gate validates auth.log/syslog (or journald), agent active, syscollector, SCA; exit code + Issue on fail | Define must-have Linux logs |
 

@@ -10,6 +10,9 @@ Documentación operativa y de gobierno para el home SOC.
 ## Metrics
 - `docs/governance/metrics.md`
 
+## Infra
+- `docs/infra/ola1-linux-endpoint.md`
+
 ## Runbooks
 ### Plataforma
 - `docs/runbooks/platform/P0-PLAT-HEALTH-001_platform_health_check.md`
