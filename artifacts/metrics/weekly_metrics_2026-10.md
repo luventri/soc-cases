@@ -1,6 +1,6 @@
 # Weekly metrics pack 2026-10 (MET-001)
 
-- Generated (UTC): 2026-03-03 13:52 UTC
+- Generated (UTC): 2026-03-03 14:04 UTC
 - Window (UTC): 2026-02-25 .. 2026-03-03
 - Sources: artifacts/telemetry/coverage, artifacts/platform/ops-alerts, GitHub Actions
 

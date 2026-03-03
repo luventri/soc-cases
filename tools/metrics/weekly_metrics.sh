@@ -106,18 +106,18 @@ ci_note="gh unavailable or unauthenticated"
 if command -v gh >/dev/null 2>&1; then
   if gh auth status >/dev/null 2>&1; then
     if ci_raw="$(gh run list --branch main --limit 60 --json workflowName,conclusion,createdAt 2>/dev/null)"; then
-      ci_note="from recent GitHub Actions runs on main"
-      if ci_eval="$(python3 - "${ci_raw}" <<'PY'
+      ci_note="from GitHub Actions runs on main within report window"
+      if ci_eval="$(python3 - "${ci_raw}" "${WINDOW_START}" "${WINDOW_END}" <<'PY'
 import json,sys,datetime
 raw=sys.argv[1]
+window_start=datetime.datetime.fromisoformat(sys.argv[2]+'T00:00:00+00:00')
+window_end=datetime.datetime.fromisoformat(sys.argv[3]+'T23:59:59+00:00')
 runs=json.loads(raw)
 workflows=[
   'Secret scanning (gitleaks)',
   'Security policy checks',
   'Lint and audit controls',
 ]
-now=datetime.datetime.now(datetime.timezone.utc)
-window_start=now-datetime.timedelta(days=7)
 latest={name:None for name in workflows}
 for r in runs:
   w=r.get('workflowName')
@@ -127,7 +127,7 @@ for r in runs:
   if not created:
     continue
   dt=datetime.datetime.fromisoformat(created.replace('Z','+00:00'))
-  if dt < window_start:
+  if dt < window_start or dt > window_end:
     continue
   prev=latest[w]
   if prev is None or dt > prev[0]:
