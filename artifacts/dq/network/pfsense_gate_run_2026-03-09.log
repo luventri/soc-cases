@@ -1,0 +1,7 @@
+SUMMARY:
+- N1 recent ingest      : PASS
+- N2 filterlog presence : PASS
+- N3 key field parse    : PASS
+- N4 aux signal         : PASS
+FINAL: PASS
+ARTIFACT: /home/socadmin/soc-cases/artifacts/dq/network/pfsense_gate_2026-03-09.md

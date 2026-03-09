@@ -71,7 +71,7 @@ Goal: not only SIEM+single Windows endpoint. Add Linux endpoint and perimeter te
 |---|---|---|---|---|---|---|---|---|---|
 | OLA1-NET-001 | Wave 1 | Perimeter | pfSense VM deployed with WAN/LAN segmentation | P0 | SOC Engineer | DONE | docs/infra/ola1-pfsense.md; artifacts/infra/ola1-pfsense_YYYY-MM-DD.md | pfSense running; LAN network defined; basic rules; mgmt access controlled | Proceed with OLA1-NET-002 (pfSense telemetry export to SIEM) |
 | OLA1-NET-002 | Wave 1 | Network telemetry | Export pfSense logs/telemetry to SIEM | P0 | Telemetry Owner + SOC Engineer | DONE | docs/runbooks/onboarding/network/pfsense_to_siem.md; tools/onboarding/network/pfsense_ingest_check.sh; artifacts/telemetry/network/* | Logs arrive in SIEM (syslog or supported integration); basic parsing validated | Continue with OLA1-NET-003 (network DQ gate and field-level assertions) |
-| OLA1-NET-003 | Wave 1 | Network DQ | DQ gate for pfSense telemetry | P1 | Telemetry Owner | TODO | tools/dq/network_pfsense_gate.sh; artifacts/dq/network/* | Gate asserts recent events + key fields; Issue on fail | Add to weekly metrics pack |
+| OLA1-NET-003 | Wave 1 | Network DQ | DQ gate for pfSense telemetry | P1 | Telemetry Owner | DONE | tools/dq/network_pfsense_gate.sh; docs/runbooks/onboarding/network/pfsense_dq_gate.md; artifacts/dq/network/* | Gate asserts recent events + key fields; Issue on fail | Add NET gate execution to weekly cadence/metrics pack |
 
 ### OLA1-OPS (Sustained operation)
 | id | area | capability | sub-capability | priority | owner_role | status | evidence_paths | acceptance_criteria (DoD) | next_action |
