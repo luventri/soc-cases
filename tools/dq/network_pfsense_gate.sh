@@ -81,9 +81,11 @@ PAYLOAD="$(cat <<JSON
   "_source": ["@timestamp","location","predecoder.program_name","decoder.name","full_log"],
   "query": {
     "bool": {
-      "filter": [{"range":{"@timestamp":{"gte":"now-${MINUTES}m"}}}],
+      "filter": [
+        {"range":{"@timestamp":{"gte":"now-${MINUTES}m"}}},
+        {"term":{"location.keyword":"${SOURCE_IP}"}}
+      ],
       "should": [
-        {"term":{"location.keyword":"${SOURCE_IP}"}},
         {"match_phrase":{"full_log":"filterlog"}},
         {"match_phrase":{"full_log":"dhcpd"}},
         {"match_phrase":{"full_log":"pfsense-test"}}
